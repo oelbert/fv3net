@@ -21,7 +21,7 @@ FMS_FCFLAGS='-FR -i4 -r8'
 FMS_MAKE_OPTIONS=
 
 # fv3gfs-fortran arguments
-FV3GFS_PLATFORM=gaea-c5
+FV3GFS_PLATFORM=gaea-c5_serialize
 
 # Python requirements environment variables
 MPI4PY_CC=cc

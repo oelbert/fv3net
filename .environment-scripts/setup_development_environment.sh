@@ -20,6 +20,7 @@ then
     export ESMFMKFILE=$INSTALL_PREFIX/esmf/lib/esmf.mk
     export FMS_DIR=$FV3NET_DIR/external/fv3gfs-fortran/FMS
     export FV3_DIR=$FV3NET_DIR/external/fv3gfs-fortran/FV3
+    SERIAL_DIR=$FV3NET_DIR/external/fv3gfs-fortran/serial
     if [ -n "${CALLPYFORT}" ];
     then
         export CALL_PY_FORT_DIR=$CLONE_PREFIX/call_py_fort
@@ -28,6 +29,25 @@ fi
 
 if [ "$INSTALL_TYPE" == "all" ] || [ "$INSTALL_TYPE" == "fv3gfs-fortran" ];
 then
+    if [$PLATFORM==*"serialize"*];
+    then
+        echo -e ">>> preprocessing code for serialization"
+        mkdir -p $SERIAL_DIR/FV3/atmos_cubed_sphere/model
+        mkdir -p $SERIAL_DIR/FV3/atmos_cubed_sphere/driver/fvGFS
+        mkdir -p $SERIAL_DIR/FV3/atmos_cubed_sphere/tools
+	    mkdir -p $SERIAL_DIR/FV3/gfsphysics/GFS_layer
+
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3 $FV3_DIR/*.F90
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3/atmos_cubed_sphere/model $FV3_DIR/atmos_cubed_sphere/model/*.F90
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3/atmos_cubed_sphere/driver/fvGFS $FV3_DIR/atmos_cubed_sphere/driver/fvGFS/*.F90
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3/gfsphysics/GFS_layer $FV3_DIR/gfsphysics/GFS_layer/*.F90
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3/atmos_cubed_sphere/tools $FV3_DIR/atmos_cubed_sphere/tools/fv_grid_tools.F90
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3/atmos_cubed_sphere/tools $FV3_DIR/atmos_cubed_sphere/tools/fv_restart.F90
+        python3 $PPSER_PY $PPSER_FLAGS  --output-dir=$SERIAL_DIR/FV3/atmos_cubed_sphere/tools $FV3_DIR/atmos_cubed_sphere/tools/test_cases.F90
+
+        cp -r -u $SERIAL_DIR/FV3/* $FV3_DIR/
+
+    fi
     CALLPYFORT=$CALLPYFORT bash "$SCRIPTS"/install_fv3gfs_fortran.sh "$FV3_DIR" "$FV3GFS_PLATFORM" "$INSTALL_PREFIX"
 fi
 
