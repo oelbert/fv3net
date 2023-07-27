@@ -2,11 +2,11 @@
 
 # NCEPlibs arguments
 NCEPLIBS_PLATFORM=gaea
-NCEPLIBS_COMPILER=gcc
+NCEPLIBS_COMPILER=gnu
 
 # ESMF arguments and environment variables
 ESMF_OS=Unicos
-ESMF_COMPILER=gcc
+ESMF_COMPILER=gnu
 ESMF_SITE=default
 ESMF_CC=cc
 ESMF_COMM=mpiuni
